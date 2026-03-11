@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Produto {
+  id Int @id @default(autoincrement())
+  nome String
+  marca String
+  descricao String
+  categoria String
+  variantes ProdutoVariante[]
+  foto FotoProduto[]
+  avaliacao Avaliacao[]
+}
+
+model FotoProduto {
+  id Int @id @default(autoincrement())
+  produto_id Int
+  produto Produto @relation(fields: [produto_id], references: [id])
+  foto String
+}
+
+model Avaliacao {
+  id Int @id @default(autoincrement())
+  cliente_id Int
+  cliente Cliente @relation(fields: [cliente_id], references: [id])
+  produto_id Int
+  produto Produto @relation(fields: [produto_id], references: [id])
+  nota Int
+  comentario String
+  data_avaliacao DateTime @default(now())
+}
+
+model ProdutoVariante {
+  id Int @id @default(autoincrement())
+  produto_id Int
+  produto Produto @relation(fields: [produto_id], references: [id])
+  cor String
+  tamanho Float
+  preco Float
+  estoque Int
+  itens_pedido ItemPedido[]
+}
+
+model Cliente {
+  id Int @id @default(autoincrement())
+  nome_cliente String
+  apelido String
+  foto_perfil String
+  data_de_nascimento DateTime
+  documento String 
+  email String @unique
+  senha String
+  telefone String @unique
+  data_cadastro DateTime @default(now())
+  ativo Boolean
+  endereco Endereco[]
+  pedido Pedido[]
+  cartao InfoCartao[]
+  avaliacao Avaliacao[]
+}
+
+model Pedido {
+  id Int @id @default(autoincrement())
+  cliente_id Int
+  cliente Cliente @relation(fields: [cliente_id], references: [id])
+  endereco_id Int
+  endereco Endereco @relation(fields: [endereco_id], references: [id])
+  data_pedido DateTime @default(now())
+  preco_total_pedido Float
+  status StatusPedido @default(PENDENTE)
+  itens ItemPedido[]
+  pagamento Pagamento?
+}
+
+model ItemPedido {
+  id Int @id @default(autoincrement())
+  pedido_id Int
+  pedido Pedido @relation(fields: [pedido_id], references: [id])
+  produto_variante_id Int
+  produto_variante ProdutoVariante @relation (fields: [produto_variante_id], references: [id])
+  quantidade Int
+  preco_unit_pedido Float
+}
+
+model Endereco {
+  id Int @id @default(autoincrement())
+  cliente_id Int
+  cliente Cliente @relation(fields: [cliente_id], references: [id])
+  rua String
+  numero Int
+  cidade String
+  cep String
+  estado String
+  principal Boolean
+  pedido Pedido[] 
+}
+
+model Pagamento {
+  id Int @id @default(autoincrement())
+  pedido_id Int @unique
+  pedido Pedido @relation(fields: [pedido_id], references: [id])
+  forma_pagamento String
+  status_pagamento String
+  data_pagamento DateTime @default(now())
+  valor_pagamento Float
+}
+
+model InfoCartao {
+  id Int @id @default(autoincrement())
+  cliente_id Int
+  cliente Cliente @relation(fields: [cliente_id], references: [id])
+  ultimos_4_digitos Int
+  bandeira String
+  nome_titular String
+  mes_expiracao Int
+  ano_expiracao Int
+}
+
+enum StatusPedido {
+  PENDENTE
+  CONFIRMADO 
+  SAIU_PARA_ENTREGA
+  ENTREGUE
+  CANCELADO
+}
