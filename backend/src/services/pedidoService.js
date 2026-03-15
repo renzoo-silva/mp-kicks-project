@@ -51,3 +51,17 @@ export async function buscarPedido (id, clienteId) {
         }
     })
 }
+
+export async function cancelarPedido (id, clienteId) {
+
+    const pedido = await prisma.pedido.update ({
+        
+        where: {
+            id: Number(id),
+            cliente_id: clienteId
+        },
+        data: { status: 'CANCELADO' }
+    })
+
+    return pedido
+}
