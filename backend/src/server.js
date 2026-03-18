@@ -4,6 +4,7 @@ import produtosRouter from './routes/produtos.js'
 import clientesRouter from './routes/clientes.js'
 import pedidosRouter from './routes/pedidos.js'
 import enderecosRouter from './routes/enderecos.js'
+import variantesRouter from './routes/variantes.js'
 
 const app = express()
 const PORT = 3000
@@ -14,6 +15,7 @@ app.use('/produtos', produtosRouter)
 app.use('/clientes', clientesRouter)
 app.use('/pedidos', pedidosRouter)
 app.use('/enderecos', enderecosRouter)
+app.use('/produtos', variantesRouter)
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`)

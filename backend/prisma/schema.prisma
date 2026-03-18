@@ -50,7 +50,16 @@ model ProdutoVariante {
   tamanho Float
   preco Float
   estoque Int
+  ativo Boolean @default(true)
   itens_pedido ItemPedido[]
+  fotos FotoVariante[]
+}
+
+model FotoVariante {
+  id Int @id @default(autoincrement())
+  variante_id Int
+  variante ProdutoVariante @relation(fields: [variante_id], references: [id])
+  foto String
 }
 
 model Cliente {
